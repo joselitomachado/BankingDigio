@@ -182,10 +182,18 @@
 
             Console.WriteLine("Digite o valor do deposito: ");
             double valor = double.Parse(Console.ReadLine());
+            
+            if(valor <= 1000)
+            {
+                contaBancaria.Deposito(valor);
 
-            contaBancaria.Deposito(valor);
-
-            Console.WriteLine("Deposito realizado com sucesso!");
+                Console.WriteLine("Deposito realizado com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("O valor limite para deposito é R$ 1.000,00");
+            }
+            
             Thread.Sleep(1000);
             Console.Clear();
 
