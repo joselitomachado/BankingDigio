@@ -1,6 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-
-namespace BankingDigio.Models
+﻿namespace BankingDigio.Models
 {
     public class Layout
     {
@@ -186,8 +184,8 @@ namespace BankingDigio.Models
 
             Console.WriteLine("Digite o valor do deposito: ");
             double valor = double.Parse(Console.ReadLine());
-            
-            if(valor <= 1000)
+
+            if (valor <= 1000)
             {
                 contaBancaria.Deposito(valor);
 
@@ -197,7 +195,7 @@ namespace BankingDigio.Models
             {
                 Console.WriteLine("O valor limite para deposito é R$ 1.000,00");
             }
-            
+
             Thread.Sleep(1000);
             Console.Clear();
 
@@ -259,14 +257,14 @@ namespace BankingDigio.Models
                 throw new Exception("Conta de destino não encontrada.");
             }
 
-            if(numeroConta == contaBancaria.NumeroConta)
+            if (numeroConta == contaBancaria.NumeroConta)
             {
                 throw new Exception("Não é possível realizar transferência para a própria conta.");
             }
 
             Console.WriteLine("Digite o valor da transferência: ");
             double valorTransferencia = double.Parse(Console.ReadLine());
-            
+
 
             if (valorTransferencia <= contaBancaria.Saldo && valorTransferencia > 0)
             {
