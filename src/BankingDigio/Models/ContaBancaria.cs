@@ -4,14 +4,14 @@
     {
         public ContaBancaria()
         {
-            this.NumeroAgencia = "1";
+            NumeroAgencia = "1";
             ContaBancaria.NumeroSequencial++;
             this.NumeroConta = $"{ContaBancaria.NumeroSequencial}";
         }
 
-        public string Nome { get; set; }
-        public string CPF { get; set; }
-        public string Senha { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string CPF { get; set; } = string.Empty;
+        public string Senha { get; set; } = string.Empty;
         public string NumeroAgencia { get; set; }
         public string NumeroConta { get; set; }
         public static int NumeroSequencial { get; private set; }
@@ -39,13 +39,12 @@
             return true;
         }
 
-        public bool Transferir(ContaBancaria contaBancaria ,double valor)
+        public bool Transferir(ContaBancaria contaDestino, double valor)
         {
-            if (valor <= this.ConsultaSaldo())
+            if (valor <= Saldo)
             {
                 Saque(valor);
-                contaBancaria.Deposito(valor);
-
+                contaDestino.Deposito(valor);
                 return true;
             }
 

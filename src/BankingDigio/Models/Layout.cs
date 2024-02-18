@@ -1,4 +1,6 @@
-﻿namespace BankingDigio.Models
+﻿using static System.Net.Mime.MediaTypeNames;
+
+namespace BankingDigio.Models
 {
     public class Layout
     {
@@ -47,7 +49,7 @@
             }
             catch (Exception erro)
             {
-                Console.WriteLine($"Ocorreu um erro: {erro.Message}");
+                Console.WriteLine(erro.Message);
                 Thread.Sleep(1000);
                 Console.Clear();
                 TelaPrincipal();
@@ -61,20 +63,22 @@
 
             Console.WriteLine("Digite seu nome: ");
             string nome = Console.ReadLine();
-            if (nome == "") throw new Exception("Campo Nome é obrigatório");
+            if (string.IsNullOrEmpty(nome)) throw new Exception("Campo Nome é obrigatório");
 
             Console.WriteLine("\nDigite seu CPF: ");
             string cpf = Console.ReadLine();
-            if (cpf == "") throw new Exception("Campo CPF é obrigatório");
+            if (string.IsNullOrEmpty(cpf)) throw new Exception("Campo CPF é obrigatório");
 
             Console.WriteLine("\nDigite sua senha: ");
             string senha = Console.ReadLine();
-            if (senha == "") throw new Exception("Campo Senha é obrigatório");
+            if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Senha é obrigatório");
 
-            ContaBancaria contaBancaria = new();
-            contaBancaria.Nome = nome;
-            contaBancaria.CPF = cpf;
-            contaBancaria.Senha = senha;
+            ContaBancaria contaBancaria = new()
+            {
+                Nome = nome,
+                CPF = cpf,
+                Senha = senha
+            };
 
             contasBancarias.Add(contaBancaria);
 
@@ -94,17 +98,17 @@
 
             Console.WriteLine("Digite o número da agência: ");
             string numeroAgencia = Console.ReadLine();
-            if (numeroAgencia == "") throw new Exception("Campo Número de Agência obrigatório");
+            if (string.IsNullOrEmpty(numeroAgencia)) throw new Exception("Campo Número de Agência obrigatório");
 
             Console.WriteLine("Digite número da conta: ");
             string numeroConta = Console.ReadLine();
-            if (numeroConta == "") throw new Exception("Campo Número de Agência obrigatório");
+            if (string.IsNullOrEmpty(numeroConta)) throw new Exception("Campo Número de Agência obrigatório");
 
             Console.WriteLine("Digite sua senha: ");
             string senha = Console.ReadLine();
-            if (senha == "") throw new Exception("Campo Número de Agência obrigatório");
+            if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Número de Agência obrigatório");
 
-            ContaBancaria contaBancaria = contasBancarias.FirstOrDefault(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta && x.Senha == senha);
+            var contaBancaria = contasBancarias.FirstOrDefault(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta && x.Senha == senha);
 
             if (contaBancaria != null)
             {
@@ -168,14 +172,14 @@
             }
             catch (Exception erro)
             {
-                Console.WriteLine($"Ocorreu um erro: {erro.Message}");
+                Console.WriteLine(erro.Message);
                 Thread.Sleep(1000);
                 Console.Clear();
                 TelaLogado(contaBancaria);
             }
         }
 
-        public static void TelaDeposito(ContaBancaria contaBancaria)
+        private static void TelaDeposito(ContaBancaria contaBancaria)
         {
             BancoDigital();
             Perfil(contaBancaria);
@@ -199,7 +203,8 @@
 
             TelaLogado(contaBancaria);
         }
-        public static void TelaSaque(ContaBancaria contaBancaria)
+
+        private static void TelaSaque(ContaBancaria contaBancaria)
         {
             BancoDigital();
             Perfil(contaBancaria);
@@ -223,7 +228,7 @@
             TelaLogado(contaBancaria);
         }
 
-        public static void TelaSaldo(ContaBancaria contaBancaria)
+        private static void TelaSaldo(ContaBancaria contaBancaria)
         {
             BancoDigital();
             Perfil(contaBancaria);
@@ -241,11 +246,11 @@
 
             Console.Write("Digite o número da agência de destino: ");
             string numeroAgencia = Console.ReadLine();
-            if (numeroAgencia == "") throw new Exception("Campo obrigatório");
+            if (string.IsNullOrEmpty(numeroAgencia)) throw new Exception("Campo obrigatório");
 
             Console.Write("Digite o número da conta de destino: ");
             string numeroConta = Console.ReadLine();
-            if (numeroConta == "") throw new Exception("Campo obrigatório");
+            if (string.IsNullOrEmpty(numeroConta)) throw new Exception("Campo obrigatório");
 
             var contaDestino = contasBancarias.Where(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta).FirstOrDefault();
 
@@ -256,11 +261,12 @@
 
             if(numeroConta == contaBancaria.NumeroConta)
             {
-                throw new Exception("Não é possivel fazer transferência para própria conta.");
+                throw new Exception("Não é possível realizar transferência para a própria conta.");
             }
 
             Console.WriteLine("Digite o valor da transferência: ");
             double valorTransferencia = double.Parse(Console.ReadLine());
+            
 
             if (valorTransferencia <= contaBancaria.Saldo && valorTransferencia > 0)
             {
@@ -270,7 +276,7 @@
             }
             else
             {
-                throw new Exception("O valor da transferência está inválida, verifique seu saldo!");
+                throw new Exception("Saldo insuficiente para realizar a transferência.");
             }
 
             Thread.Sleep(2000);
