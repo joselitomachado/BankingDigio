@@ -2,7 +2,7 @@
 {
     public class Layout
     {
-        private static List<ContaBancaria> contasBancarias = new();
+        private static List<Conta> contas = new();
         private static int opcao = 0;
 
         private static void BancoDigital()
@@ -20,9 +20,9 @@
                 BancoDigital();
 
                 Console.WriteLine("Digite a opção desejada: \n");
-                Console.WriteLine("1 - Fazer Login");
-                Console.WriteLine("2 - Fazer Registro");
-                Console.WriteLine("3 - Fechar Sistema");
+                Console.WriteLine("[1] - Login");
+                Console.WriteLine("[2] - Criar Conta");
+                Console.WriteLine("[3] - Sair");
 
                 opcao = int.Parse(Console.ReadLine());
 
@@ -39,7 +39,7 @@
                         break;
                     default:
                         Console.WriteLine("Opção inválida");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(2000);
                         Console.Clear();
                         TelaPrincipal();
                         break;
@@ -48,7 +48,7 @@
             catch (Exception erro)
             {
                 Console.WriteLine(erro.Message);
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 Console.Clear();
                 TelaPrincipal();
             }
@@ -71,22 +71,22 @@
             string senha = Console.ReadLine();
             if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Senha é obrigatório");
 
-            ContaBancaria contaBancaria = new()
+            Conta conta = new()
             {
                 Nome = nome,
                 CPF = cpf,
                 Senha = senha
             };
 
-            contasBancarias.Add(contaBancaria);
+            contas.Add(conta);
 
             Console.WriteLine("\nCadastro realizado com sucesso.\n");
-            Console.WriteLine($"Número da agência: {contaBancaria.NumeroAgencia}");
-            Console.WriteLine($"Número da conta: {contaBancaria.NumeroConta}");
+            Console.WriteLine($"Número da agência: {conta.NumeroAgencia}");
+            Console.WriteLine($"Número da conta: {conta.NumeroConta}");
 
-            Thread.Sleep(1500);
+            Thread.Sleep(2000);
 
-            TelaLogado(contaBancaria);
+            TelaLogado(conta);
         }
 
         private static void TelaLogin()
@@ -106,11 +106,11 @@
             string senha = Console.ReadLine();
             if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Número de Agência obrigatório");
 
-            var contaBancaria = contasBancarias.FirstOrDefault(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta && x.Senha == senha);
+            var conta = contas.FirstOrDefault(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta && x.Senha == senha);
 
-            if (contaBancaria != null)
+            if (conta != null)
             {
-                TelaLogado(contaBancaria);
+                TelaLogado(conta);
             }
             else
             {
@@ -121,73 +121,77 @@
             }
         }
 
-        private static void Perfil(ContaBancaria contaBancaria)
+        private static void Perfil(Conta conta)
         {
-            Console.WriteLine($"{contaBancaria.Nome} | CPF: {contaBancaria.CPF} | Agência: {contaBancaria.NumeroAgencia} | Conta: {contaBancaria.NumeroConta}\n");
+            Console.WriteLine($"{conta.Nome} | CPF: {conta.CPF} | Agência: {conta.NumeroAgencia} | Conta: {conta.NumeroConta}\n");
         }
 
-        private static void TelaLogado(ContaBancaria contaBancaria)
+        private static void TelaLogado(Conta conta)
         {
             try
             {
                 BancoDigital();
-                Perfil(contaBancaria);
+                Perfil(conta);
 
                 Console.WriteLine("Digite a opção desejada: \n");
-                Console.WriteLine("1 - Realizar um Deposito");
-                Console.WriteLine("2 - Realizar um Saque");
-                Console.WriteLine("3 - Consultar Saldo");
-                Console.WriteLine("4 - Realizar Transferência");
-                Console.WriteLine("5 - Sair");
+                Console.WriteLine("[1] - Realizar um Deposito");
+                Console.WriteLine("[2] - Realizar um Saque");
+                Console.WriteLine("[3] - Realizar Transferência");
+                Console.WriteLine("[4] - Consultar Saldo");
+                Console.WriteLine("[5] - Extrato");
+                Console.WriteLine("[6] - Sair");
 
                 opcao = int.Parse(Console.ReadLine());
 
                 switch (opcao)
                 {
                     case 1:
-                        TelaDeposito(contaBancaria);
+                        TelaDeposito(conta);
                         break;
                     case 2:
-                        TelaSaque(contaBancaria);
+                        TelaSaque(conta);
                         break;
                     case 3:
-                        TelaSaldo(contaBancaria);
+                        TelaTransferencia(conta);
                         break;
                     case 4:
-                        TelaTransferencia(contaBancaria);
+                        TelaSaldo(conta);
                         break;
                     case 5:
+                        TelaExtrato(conta);
+                        break;
+                    case 6:
                         Console.Clear();
                         TelaPrincipal();
                         break;
                     default:
                         Console.Clear();
                         Console.WriteLine("Opção inválida");
-                        Thread.Sleep(1000);
-                        TelaLogado(contaBancaria);
+                        Thread.Sleep(2000);
+                        TelaLogado(conta);
                         break;
                 }
             }
             catch (Exception erro)
             {
                 Console.WriteLine(erro.Message);
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 Console.Clear();
-                TelaLogado(contaBancaria);
+                TelaLogado(conta);
             }
         }
 
-        private static void TelaDeposito(ContaBancaria contaBancaria)
+        private static void TelaDeposito(Conta conta)
         {
             BancoDigital();
-            Perfil(contaBancaria);
+            Perfil(conta);
 
             Console.WriteLine("Digite o valor do deposito: ");
             double valor = double.Parse(Console.ReadLine());
 
             if (valor <= 1000)
             {
-                contaBancaria.Deposito(valor);
+                conta.Deposito(valor);
 
                 Console.WriteLine("Deposito realizado com sucesso!");
             }
@@ -196,21 +200,18 @@
                 Console.WriteLine("O valor limite para deposito é R$ 1.000,00");
             }
 
-            Thread.Sleep(1000);
-            Console.Clear();
-
-            TelaLogado(contaBancaria);
+            OpcaoVoltarTela(conta);
         }
 
-        private static void TelaSaque(ContaBancaria contaBancaria)
+        private static void TelaSaque(Conta conta)
         {
             BancoDigital();
-            Perfil(contaBancaria);
+            Perfil(conta);
 
             Console.WriteLine("Digite o valor do saque: ");
             double valor = double.Parse(Console.ReadLine());
 
-            bool okSaque = contaBancaria.Saque(valor);
+            bool okSaque = conta.Saque(valor);
 
             if (okSaque)
             {
@@ -221,26 +222,23 @@
                 Console.WriteLine("Saldo insuficiente!");
             }
 
-            Thread.Sleep(1000);
-            Console.Clear();
-            TelaLogado(contaBancaria);
+            OpcaoVoltarTela(conta);
         }
 
-        private static void TelaSaldo(ContaBancaria contaBancaria)
+        private static void TelaSaldo(Conta conta)
         {
             BancoDigital();
-            Perfil(contaBancaria);
+            Perfil(conta);
 
-            Console.WriteLine($"Seu saldo é: R${contaBancaria.ConsultaSaldo()}");
+            Console.WriteLine($"Seu saldo é: R${conta.ConsultaSaldo()}");
 
-            Thread.Sleep(2000);
-            TelaLogado(contaBancaria);
+            OpcaoVoltarTela(conta);
         }
 
-        private static void TelaTransferencia(ContaBancaria contaBancaria)
+        private static void TelaTransferencia(Conta conta)
         {
             BancoDigital();
-            Perfil(contaBancaria);
+            Perfil(conta);
 
             Console.Write("Digite o número da agência de destino: ");
             string numeroAgencia = Console.ReadLine();
@@ -250,14 +248,14 @@
             string numeroConta = Console.ReadLine();
             if (string.IsNullOrEmpty(numeroConta)) throw new Exception("Campo obrigatório");
 
-            var contaDestino = contasBancarias.Where(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta).FirstOrDefault();
+            var contaDestino = contas.Where(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta).FirstOrDefault();
 
             if (contaDestino == null)
             {
                 throw new Exception("Conta de destino não encontrada.");
             }
 
-            if (numeroConta == contaBancaria.NumeroConta)
+            if (numeroConta == conta.NumeroConta)
             {
                 throw new Exception("Não é possível realizar transferência para a própria conta.");
             }
@@ -266,9 +264,9 @@
             double valorTransferencia = double.Parse(Console.ReadLine());
 
 
-            if (valorTransferencia <= contaBancaria.Saldo && valorTransferencia > 0)
+            if (valorTransferencia <= conta.ConsultaSaldo() && valorTransferencia > 0)
             {
-                contaBancaria.Transferir(contaDestino, valorTransferencia);
+                conta.Transferencia(contaDestino, valorTransferencia);
 
                 Console.WriteLine($"Transferência realizada com sucesso!");
             }
@@ -277,8 +275,64 @@
                 throw new Exception("Saldo insuficiente para realizar a transferência.");
             }
 
-            Thread.Sleep(2000);
-            TelaLogado(contaBancaria);
+            OpcaoVoltarTela(conta);
+        }
+
+        private static void TelaExtrato(Conta conta)
+        {
+            BancoDigital();
+            Perfil(conta);
+
+            if (conta.Extrato().Any())
+            {
+                double total = conta.Extrato().Sum(x => x.Valor);
+
+                foreach (Extrato extrato in conta.Extrato())
+                {
+                    Console.WriteLine($"\nData: {extrato.Data.ToString("dd/MM/yyyy HH:mm:ss")}");
+                    Console.WriteLine($"Tipo de Movimentação: {extrato.Descricao}");
+                    Console.WriteLine($"Valor: R${extrato.Valor}");
+                }
+
+                Console.WriteLine($"\nSUB TOTAL: R${total}\n");
+            }
+            else
+            {
+                Console.WriteLine("Não há extrato a ser exibido!\n");
+            }
+
+            OpcaoVoltarTela(conta);
+        }
+
+        private static void OpcaoVoltarTela(Conta conta)
+        {
+            try
+            {
+                Console.WriteLine("\nEntre com uma opção abaixo: \n");
+                Console.WriteLine("[1] - Voltar para minha conta");
+                Console.WriteLine("[2] - Sair do aplicativo");
+
+                opcao = int.Parse(Console.ReadLine());
+
+                switch (opcao)
+                {
+                    case 1:
+                        TelaLogado(conta);
+                        break;
+                    case 2:
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Digite uma opção válida");
+                        OpcaoVoltarTela(conta);
+                        break;
+                }
+            }
+            catch (Exception erro)
+            {
+                Console.WriteLine(erro.Message);
+                OpcaoVoltarTela(conta);
+            }
         }
     }
 }
