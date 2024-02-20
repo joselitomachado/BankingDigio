@@ -67,7 +67,7 @@
 
         public static bool ValidarCPF(string cpf)
         {
-            return cpf.Length == 6;
+            return cpf.Length == 11;
         }
 
         public static bool ValidarSenha(string senha)
