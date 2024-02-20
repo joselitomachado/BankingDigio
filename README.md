@@ -74,6 +74,6 @@ Mariana é dona do banco “Banking Digio” e precisa criar um sistema onde seu
 
 ### Considerações finais
 
-- Os requisitos tem que ser 100% feitos e estão todos bem explicados, caso queira acrescentar algo a mais fica a seu critério utilizando sua criatividade.
-- Qualquer dúvidas sobre os requisitos do desafio, estarei disponível nas minhas redes sociais ou discord.
-- Abraços.
+Os requisitos tem que ser 100% feitos e estão todos bem explicados, caso queira acrescentar algo a mais fica a seu critério utilizando sua criatividade.
+Qualquer dúvidas sobre os requisitos do desafio, estarei disponível nas minhas redes sociais ou discord.
+Abraços.
