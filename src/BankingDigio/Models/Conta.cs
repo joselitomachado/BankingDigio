@@ -64,5 +64,15 @@
         {
             return this.Movimentacoes;
         }
+
+        public static bool ValidarCPF(string cpf)
+        {
+            return cpf.Length == 6;
+        }
+
+        public static bool ValidarSenha(string senha)
+        {
+            return senha.Length >= 6 && senha.Length <= 16;
+        }
     }
 }
