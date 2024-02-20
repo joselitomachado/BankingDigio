@@ -1,3 +1,3 @@
 ﻿using BankingDigio.Models;
 
-Layout.TelaPrincipal();
+Layout.Menu();

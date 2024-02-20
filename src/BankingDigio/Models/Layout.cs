@@ -13,7 +13,7 @@
             Console.WriteLine("\nBanking Digio - BANCO DIGITAL\n");
         }
 
-        public static void TelaPrincipal()
+        public static void Menu()
         {
             try
             {
@@ -29,10 +29,10 @@
                 switch (opcao)
                 {
                     case 1:
-                        TelaLogin();
+                        Login();
                         break;
                     case 2:
-                        TelaCriarConta();
+                        Cadastro();
                         break;
                     case 3:
                         Environment.Exit(0);
@@ -41,7 +41,7 @@
                         Console.WriteLine("Opção inválida");
                         Thread.Sleep(2000);
                         Console.Clear();
-                        TelaPrincipal();
+                        Menu();
                         break;
                 }
             }
@@ -50,11 +50,11 @@
                 Console.WriteLine(erro.Message);
                 Thread.Sleep(2000);
                 Console.Clear();
-                TelaPrincipal();
+                Menu();
             }
         }
 
-        private static void TelaCriarConta()
+        private static void Cadastro()
         {
             BancoDigital();
             Console.WriteLine("Faça o seu cadastro abaixo:\n");
@@ -66,10 +66,13 @@
             Console.WriteLine("\nDigite seu CPF: ");
             string cpf = Console.ReadLine();
             if (string.IsNullOrEmpty(cpf)) throw new Exception("Campo CPF é obrigatório");
+            if (!Conta.ValidarCPF(cpf)) throw new Exception("CPF inválido");
+            if (CPFCadastrado(cpf)) throw new Exception("CPF já cadastrado.");
 
             Console.WriteLine("\nDigite sua senha: ");
             string senha = Console.ReadLine();
             if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Senha é obrigatório");
+            if (!Conta.ValidarSenha(senha)) throw new Exception("A senha precisa ter no mínimo 6 e no máximo 16 dígitos");
 
             Conta conta = new()
             {
@@ -81,56 +84,60 @@
             contas.Add(conta);
 
             Console.WriteLine("\nCadastro realizado com sucesso.\n");
-            Console.WriteLine($"Número da agência: {conta.NumeroAgencia}");
-            Console.WriteLine($"Número da conta: {conta.NumeroConta}");
 
             Thread.Sleep(2000);
-
-            TelaLogado(conta);
+            Logado(conta);
         }
 
-        private static void TelaLogin()
+        private static bool CPFCadastrado(string cpf)
+        {
+            foreach (Conta conta in contas)
+            {
+                if (conta.CPF == cpf)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static void Login()
         {
             BancoDigital();
             Console.WriteLine("Faça o seu login abaixo:\n");
 
-            Console.WriteLine("Digite o número da agência: ");
-            string numeroAgencia = Console.ReadLine();
-            if (string.IsNullOrEmpty(numeroAgencia)) throw new Exception("Campo Número de Agência obrigatório");
-
-            Console.WriteLine("Digite número da conta: ");
-            string numeroConta = Console.ReadLine();
-            if (string.IsNullOrEmpty(numeroConta)) throw new Exception("Campo Número de Agência obrigatório");
+            Console.WriteLine("Digite seu CPF: ");
+            string cpf = Console.ReadLine();
+            if (string.IsNullOrEmpty(cpf)) throw new Exception("Campo CPF é obrigatório");
 
             Console.WriteLine("Digite sua senha: ");
             string senha = Console.ReadLine();
-            if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Número de Agência obrigatório");
+            if (string.IsNullOrEmpty(senha)) throw new Exception("Campo Senha é obrigatório");
 
-            var conta = contas.FirstOrDefault(x => x.NumeroAgencia == numeroAgencia && x.NumeroConta == numeroConta && x.Senha == senha);
+            var conta = contas.FirstOrDefault(x => x.CPF == cpf && x.Senha == senha);
 
             if (conta != null)
             {
-                TelaLogado(conta);
+                Logado(conta);
             }
             else
             {
-                Console.WriteLine("Agencia/Conta/Senha inválido, verifique os dados e tente novamente");
+                Console.WriteLine("CPF ou Senha inválida, tente novamente");
                 Thread.Sleep(2000);
-                Console.Clear();
-                TelaPrincipal();
+                Menu();
             }
         }
 
         private static void Perfil(Conta conta)
         {
+            BancoDigital();
             Console.WriteLine($"{conta.Nome} | CPF: {conta.CPF} | Agência: {conta.NumeroAgencia} | Conta: {conta.NumeroConta}\n");
         }
 
-        private static void TelaLogado(Conta conta)
+        private static void Logado(Conta conta)
         {
             try
             {
-                BancoDigital();
                 Perfil(conta);
 
                 Console.WriteLine("Digite a opção desejada: \n");
@@ -146,29 +153,28 @@
                 switch (opcao)
                 {
                     case 1:
-                        TelaDeposito(conta);
+                        Deposito(conta);
                         break;
                     case 2:
-                        TelaSaque(conta);
+                        Saque(conta);
                         break;
                     case 3:
-                        TelaTransferencia(conta);
+                        Transferencia(conta);
                         break;
                     case 4:
-                        TelaSaldo(conta);
+                        Saldo(conta);
                         break;
                     case 5:
-                        TelaExtrato(conta);
+                        Extrato(conta);
                         break;
                     case 6:
-                        Console.Clear();
-                        TelaPrincipal();
+                        Menu();
                         break;
                     default:
                         Console.Clear();
                         Console.WriteLine("Opção inválida");
                         Thread.Sleep(2000);
-                        TelaLogado(conta);
+                        Logado(conta);
                         break;
                 }
             }
@@ -176,14 +182,12 @@
             {
                 Console.WriteLine(erro.Message);
                 Thread.Sleep(2000);
-                Console.Clear();
-                TelaLogado(conta);
+                Logado(conta);
             }
         }
 
-        private static void TelaDeposito(Conta conta)
+        private static void Deposito(Conta conta)
         {
-            BancoDigital();
             Perfil(conta);
 
             Console.WriteLine("Digite o valor do deposito: ");
@@ -200,12 +204,11 @@
                 Console.WriteLine("O valor limite para deposito é R$ 1.000,00");
             }
 
-            OpcaoVoltarTela(conta);
+            OpcaoVoltar(conta);
         }
 
-        private static void TelaSaque(Conta conta)
+        private static void Saque(Conta conta)
         {
-            BancoDigital();
             Perfil(conta);
 
             Console.WriteLine("Digite o valor do saque: ");
@@ -222,22 +225,20 @@
                 Console.WriteLine("Saldo insuficiente!");
             }
 
-            OpcaoVoltarTela(conta);
+            OpcaoVoltar(conta);
         }
 
-        private static void TelaSaldo(Conta conta)
+        private static void Saldo(Conta conta)
         {
-            BancoDigital();
             Perfil(conta);
 
             Console.WriteLine($"Seu saldo é: R${conta.ConsultaSaldo()}");
 
-            OpcaoVoltarTela(conta);
+            OpcaoVoltar(conta);
         }
 
-        private static void TelaTransferencia(Conta conta)
+        private static void Transferencia(Conta conta)
         {
-            BancoDigital();
             Perfil(conta);
 
             Console.Write("Digite o número da agência de destino: ");
@@ -275,12 +276,11 @@
                 throw new Exception("Saldo insuficiente para realizar a transferência.");
             }
 
-            OpcaoVoltarTela(conta);
+            OpcaoVoltar(conta);
         }
 
-        private static void TelaExtrato(Conta conta)
+        private static void Extrato(Conta conta)
         {
-            BancoDigital();
             Perfil(conta);
 
             if (conta.Extrato().Any())
@@ -301,37 +301,36 @@
                 Console.WriteLine("Não há extrato a ser exibido!\n");
             }
 
-            OpcaoVoltarTela(conta);
+            OpcaoVoltar(conta);
         }
 
-        private static void OpcaoVoltarTela(Conta conta)
+        private static void OpcaoVoltar(Conta conta)
         {
             try
             {
-                Console.WriteLine("\nEntre com uma opção abaixo: \n");
-                Console.WriteLine("[1] - Voltar para minha conta");
-                Console.WriteLine("[2] - Sair do aplicativo");
+                Console.WriteLine("\n[1] - Voltar para conta");
+                Console.WriteLine("[2] - Sair da conta");
 
                 opcao = int.Parse(Console.ReadLine());
 
                 switch (opcao)
                 {
                     case 1:
-                        TelaLogado(conta);
+                        Logado(conta);
                         break;
                     case 2:
-                        Environment.Exit(0);
+                        Menu();
                         break;
                     default:
                         Console.WriteLine("Digite uma opção válida");
-                        OpcaoVoltarTela(conta);
+                        OpcaoVoltar(conta);
                         break;
                 }
             }
             catch (Exception erro)
             {
                 Console.WriteLine(erro.Message);
-                OpcaoVoltarTela(conta);
+                OpcaoVoltar(conta);
             }
         }
     }
